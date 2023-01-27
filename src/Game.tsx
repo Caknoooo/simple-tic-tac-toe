@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import Square from "./Square";
 
+type Scores = {
+  [key: string]: number;
+};
+
 const INITIAL_GAME_STATE = ["", "", "", "", "", "", "", "", ""];
+const INITIAL_SCORE: Scores = { X: 0, O: 0 };
 
 const WINNING_COMBOS = [
   [0, 1, 2],
@@ -17,10 +22,19 @@ const WINNING_COMBOS = [
 function Game() {
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [currentPlayer, setCurrentPlayer] = useState("X");
+  const [scores, setScores] = useState(INITIAL_SCORE);
 
   useEffect(() => {
+    if (gameState === INITIAL_GAME_STATE) return;
     checkForWinner();
   }, [gameState]);
+
+  useEffect(() => {
+    const storeScores = localStorage.getItem("scores");
+    if (storeScores) {
+      setScores(JSON.parse(storeScores));
+    }
+  }, []);
 
   const resetBoard = () => setGameState(INITIAL_GAME_STATE);
 
@@ -30,6 +44,12 @@ function Game() {
 
   const handleWin = () => {
     window.alert(`Congrats player ${currentPlayer}! You are the winner!`);
+
+    const newPlayerScore = scores[currentPlayer] + 1;
+    const newScores = { ...scores };
+    newScores[currentPlayer] = newPlayerScore;
+    setScores(newScores);
+    localStorage.setItem("scores", JSON.stringify(newScores));
 
     resetBoard();
   };
@@ -99,7 +119,20 @@ function Game() {
             />
           ))}
         </div>
-        <div>Score Go Here</div>
+        <div className="mx-auto w-96 text-2xl text-center">
+          <p className="text-white mt-5">
+            Next Player : <span>{currentPlayer}</span>
+          </p>
+          <p className="text-white mt-5">
+            Player X wins : <span>{scores["X"]}</span>
+          </p>
+          <p className="text-white mt-5">
+            Player O wins : <span>{scores["O"]}</span>
+          </p>
+        </div>
+        <button onClick={() => setScores(INITIAL_SCORE)}>
+          <a href="/">Button</a>
+        </button>
       </div>
     </div>
   );
