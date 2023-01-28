@@ -94,7 +94,6 @@ function Game() {
     const cellIndex = Number(event.target.getAttribute("data-cell-index"));
 
     const currentValue = gameState[cellIndex];
-    console.log(currentValue);
     if (currentValue) {
       return;
     }
@@ -102,6 +101,10 @@ function Game() {
     const newValues = [...gameState];
     newValues[cellIndex] = currentPlayer;
     setGameState(newValues);
+  };
+
+  const storeScore = () => {
+    window.localStorage.removeItem("scores");
   };
 
   return (
@@ -130,9 +133,11 @@ function Game() {
             Player O wins : <span>{scores["O"]}</span>
           </p>
         </div>
-        <button onClick={() => setScores(INITIAL_SCORE)}>
-          <a href="/">Button</a>
-        </button>
+        <div className="">
+          <button onClick={() => storeScore()} className="bg-blue-300 to-slate-400 rounded-md p-2">
+            <a href="/">Reset Score</a>
+          </button>
+        </div>
       </div>
     </div>
   );
